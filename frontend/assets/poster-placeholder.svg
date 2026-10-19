@@ -1,0 +1,14 @@
+<svg viewBox="0 0 800 350" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2952E3"/>
+      <stop offset="55%" stop-color="#6C4BE0"/>
+      <stop offset="100%" stop-color="#00B8A9"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="350" fill="url(#g)"/>
+  <circle cx="120" cy="80" r="90" fill="rgba(255,255,255,0.08)"/>
+  <circle cx="700" cy="290" r="130" fill="rgba(255,255,255,0.07)"/>
+  <text x="50%" y="52%" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.9)">KEVA AI Learning Hub</text>
+  <text x="50%" y="62%" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="rgba(255,255,255,0.7)">AI-generated learning poster</text>
+</svg>

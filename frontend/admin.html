@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — KEVA AI Learning Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="kv-shell">
+  <aside class="kv-sidebar"></aside>
+  <div class="kv-main">
+    <header class="kv-topbar">
+      <button class="kv-icon-btn kv-sidebar-toggle" style="display:none;" onclick="KevaApp.toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <div id="kvGlobalSearchWrap" class="kv-search" style="position:relative;">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="kvGlobalSearch" type="text" placeholder="Search...">
+        <div id="kvSearchResults" class="kv-dropdown-panel kv-scroll-thin" style="width:100%;"></div>
+      </div>
+      <div class="kv-topbar-actions">
+        <button class="kv-icon-btn" onclick="KevaApp.toggleTheme()"><i class="fa-solid fa-moon"></i></button>
+        <div style="position:relative;">
+          <button class="kv-icon-btn" onclick="KevaApp.toggleNotifPanel()"><i class="fa-regular fa-bell"></i><span id="kvNotifBadge" class="kv-badge-dot" style="display:none;"></span></button>
+          <div id="kvNotifPanel" class="kv-dropdown-panel kv-scroll-thin"></div>
+        </div>
+        <div style="position:relative;">
+          <div class="kv-user-pill kv-topbar-user" onclick="KevaApp.toggleUserMenu()"></div>
+          <div id="kvUserMenu" class="kv-dropdown-panel" style="width:180px;">
+            <div class="kv-notif-item" style="cursor:pointer;" onclick="location.href='profile.html'"><i class="fa-solid fa-user me-2"></i>My Profile</div>
+            <div class="kv-notif-item" style="cursor:pointer;color:var(--kv-red);" onclick="KevaApp.logout()"><i class="fa-solid fa-right-from-bracket me-2"></i>Log Out</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="kv-content">
+      <div class="mb-4">
+        <div class="kv-eyebrow">Admin</div>
+        <h1 style="font-size:24px;margin:2px 0 0;">Manage Employees &amp; Content</h1>
+      </div>
+
+      <ul class="nav nav-tabs mb-3" id="adminTabs">
+        <li class="nav-item"><button class="nav-link active" onclick="showTab('employees', this)">Employees</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showTab('departments', this)">Departments</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showTab('content', this)">Generate AI Content</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showTab('announce', this)">Announcements</button></li>
+      </ul>
+
+      <!-- EMPLOYEES TAB -->
+      <div id="tab-employees">
+        <div class="kv-card">
+          <div class="kv-card-header">
+            <h3>All Employees</h3>
+            <button class="btn btn-kv-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addEmployeeModal"><i class="fa-solid fa-plus me-1"></i>Add Employee</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0" style="font-size:13px;">
+              <thead style="background:var(--kv-surface-alt);">
+                <tr><th class="ps-3">Employee</th><th>Department</th><th>Designation</th><th>Points</th><th>Status</th><th class="text-end pe-3">Actions</th></tr>
+              </thead>
+              <tbody id="empTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEPARTMENTS TAB -->
+      <div id="tab-departments" style="display:none;">
+        <div class="kv-card">
+          <div class="kv-card-header">
+            <h3>Departments</h3>
+            <button class="btn btn-kv-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDeptModal"><i class="fa-solid fa-plus me-1"></i>Add Department</button>
+          </div>
+          <div class="kv-card-pad" id="deptList"></div>
+        </div>
+      </div>
+
+      <!-- GENERATE CONTENT TAB -->
+      <div id="tab-content" style="display:none;">
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="kv-card kv-card-pad">
+              <div class="kv-eyebrow signal mb-2"><i class="fa-solid fa-image"></i>AI Poster</div>
+              <label class="kv-label">Department</label>
+              <select class="kv-form-control mb-2" id="genPosterDept"><option value="">General</option></select>
+              <label class="kv-label">Topic (optional)</label>
+              <input class="kv-form-control mb-3" id="genPosterTopic" placeholder="e.g. Vector Databases">
+              <button class="btn btn-kv-primary w-100" onclick="genContent('poster')"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>Generate Poster</button>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="kv-card kv-card-pad">
+              <div class="kv-eyebrow signal mb-2"><i class="fa-solid fa-square-poll-vertical"></i>AI Poll</div>
+              <label class="kv-label">Department</label>
+              <select class="kv-form-control mb-3" id="genPollDept"><option value="">General</option></select>
+              <button class="btn btn-kv-primary w-100" onclick="genContent('poll')"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>Generate Poll</button>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="kv-card kv-card-pad">
+              <div class="kv-eyebrow signal mb-2"><i class="fa-solid fa-circle-question"></i>AI Quiz</div>
+              <label class="kv-label">Department</label>
+              <select class="kv-form-control mb-2" id="genQuizDept"><option value="">General</option></select>
+              <label class="kv-label">Number of Questions</label>
+              <input class="kv-form-control mb-3" id="genQuizNum" type="number" min="2" max="10" value="5">
+              <button class="btn btn-kv-primary w-100" onclick="genContent('quiz')"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>Generate Quiz</button>
+            </div>
+          </div>
+        </div>
+        <div class="alert mt-3" style="background:var(--kv-primary-light);color:var(--kv-primary);border:none;border-radius:12px;font-size:13px;">
+          <i class="fa-solid fa-circle-info me-1"></i> Scheduled generation also runs automatically every day — posters at 4:00 PM, polls at 5:00 PM, and quizzes at 9:00 AM (Asia/Kolkata). Use the buttons above to generate content on demand.
+        </div>
+      </div>
+
+      <!-- ANNOUNCEMENTS TAB -->
+      <div id="tab-announce" style="display:none;">
+        <div class="kv-card kv-card-pad" style="max-width:520px;">
+          <div class="kv-eyebrow mb-2"><i class="fa-solid fa-bullhorn"></i>Broadcast Announcement</div>
+          <label class="kv-label">Title</label>
+          <input class="kv-form-control mb-2" id="annTitle" placeholder="e.g. New AI Policy Update">
+          <label class="kv-label">Message</label>
+          <textarea class="kv-form-control mb-3" id="annMessage" rows="3" placeholder="Message shown to all employees"></textarea>
+          <button class="btn btn-kv-primary" onclick="sendAnnouncement()"><i class="fa-solid fa-paper-plane me-1"></i>Send to All Employees</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Add Employee Modal -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="border-color:var(--kv-border);">
+        <h5 class="modal-title">Add Employee</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form onsubmit="return addEmployee(event)">
+        <div class="modal-body">
+          <div class="mb-2"><label class="kv-label">Full Name</label><input class="kv-form-control" id="aeName" required></div>
+          <div class="mb-2"><label class="kv-label">Email</label><input class="kv-form-control" type="email" id="aeEmail" required></div>
+          <div class="mb-2"><label class="kv-label">Temporary Password</label><input class="kv-form-control" id="aePassword" required></div>
+          <div class="mb-2"><label class="kv-label">Department</label><select class="kv-form-control" id="aeDept"></select></div>
+          <div class="mb-2"><label class="kv-label">Designation</label><input class="kv-form-control" id="aeDesignation" value="Employee"></div>
+          <div class="mb-2"><label class="kv-label">Role</label>
+            <select class="kv-form-control" id="aeRole"><option value="employee">Employee</option><option value="admin">Admin</option></select>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-color:var(--kv-border);">
+          <button type="button" class="btn btn-kv-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-kv-primary">Add Employee</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add Department Modal -->
+<div class="modal fade" id="addDeptModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="border-color:var(--kv-border);">
+        <h5 class="modal-title">Add Department</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form onsubmit="return addDepartment(event)">
+        <div class="modal-body">
+          <div class="mb-2"><label class="kv-label">Name</label><input class="kv-form-control" id="adName" required></div>
+          <div class="mb-2"><label class="kv-label">Description</label><input class="kv-form-control" id="adDesc"></div>
+          <div class="mb-2"><label class="kv-label">Font Awesome Icon Class</label><input class="kv-form-control" id="adIcon" placeholder="fa-diagram-project" value="fa-diagram-project"></div>
+        </div>
+        <div class="modal-footer" style="border-color:var(--kv-border);">
+          <button type="button" class="btn btn-kv-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-kv-primary">Add Department</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
